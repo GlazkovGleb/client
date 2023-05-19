@@ -1,26 +1,44 @@
-import React, { FC } from 'react'
+import React, { FC, useState } from 'react'
 import { ITrack } from '../../types/track'
 import { Grid, IconButton, Paper, Typography } from '@mui/material'
 import PlayCircleIcon from '@mui/icons-material/PlayCircle';
 import PauseCircleIcon from '@mui/icons-material/PauseCircle';
 import { Box } from '@mui/system';
 import { useRouter } from 'next/router';
+import useAppSelector from '../../hook/useAppSelector';
+import useActions from '../../hook/useActions';
+import baseURL from '../../consts/baseURL';
 
 interface TrackItemProps {
-    track: ITrack,
-    active?: boolean
+    track: ITrack
 }
 
-const TrackItem: FC<TrackItemProps> = ({ track, active }) => {
+const TrackItem: FC<TrackItemProps> = ({ track }) => {
     const router = useRouter()
+    const { play, currentTrack } = useAppSelector(state => state.player)
+    const { changePlay, setCurrentTrack } = useActions()
+
+    const playHandler = () => {
+        if (currentTrack?._id !== track._id) {
+            setCurrentTrack(track)
+            if (play) {
+                changePlay()
+            }
+        } else {
+            changePlay()
+        }    
+    }
 
     return (
         <Box my={2} >
             <Paper elevation={2}>
                 <Grid container px={3} py={1}>
                     <Grid item xs={1} display={'flex'} alignItems={'center'} justifyContent={'center'}>
-                        <IconButton color="primary">
-                            {active
+                        <IconButton
+                            color="primary"
+                            onClick={playHandler}
+                        >
+                            {(play && currentTrack?._id === track._id)
                                 ?
                                 <PauseCircleIcon sx={{ fontSize: '46px' }} />
                                 :
@@ -29,7 +47,7 @@ const TrackItem: FC<TrackItemProps> = ({ track, active }) => {
                         </IconButton>
                     </Grid>
                     <Grid item xs={1}>
-                        <img width={70} height={70} src='https://cdns-images.dzcdn.net/images/cover/7058811aa85af6e226def2cf1964e71b/264x264.jpg' />
+                        <img width={70} height={70} src={baseURL + '/' + track.picture} />
                     </Grid>
                     <Grid
                         item

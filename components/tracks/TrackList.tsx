@@ -4,7 +4,7 @@ import { Box } from '@mui/material'
 import TrackItem from './TrackItem'
 
 interface TrackListProps {
-    tracks: ITrack[]
+    tracks: ITrack[] 
 }
 
 const TrackList: FC<TrackListProps> = ({tracks}) => {
